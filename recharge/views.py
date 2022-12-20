@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from User.models import UserModel
@@ -6,13 +6,15 @@ from .models import RechargePack, MakeRecharge
 from recharge.serializer import PackCreateSerializer
 from django.core.serializers import serialize
 import json
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_recharge_pack(request):
     if request.method == 'POST':
-        username = request.data.get('username',None)
+        username = request.user
         price = int(request.data.get('pack_price'))
-        if username is not None and not RechargePack.objects.filter(pack_price = price).exists():
+        if not RechargePack.objects.filter(pack_price = price).exists():
             try:
                 user = UserModel.objects.get(username=username)
             except:
@@ -31,10 +33,11 @@ def add_recharge_pack(request):
                 return Response({"message" : "Access Denied !! You have no permission"}, status=status.HTTP_403_FORBIDDEN)
 
         else:
-            return {"message" : "Invalid Request!! Check username or price"}
+            return Response({"message" : "Invalid Request!! Check username or price"})
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_all_packs(request):
     operator = request.data.get('pack_operator')
     query_set = RechargePack.objects.all()
@@ -48,9 +51,10 @@ def get_all_packs(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def make_recharge(request):
     if request.method == 'POST':
-        username = request.data.get("username")
+        username = request.user
         price = int(request.data.get("price"))
         number = request.data.get("phone_number")
         operator = request.data.get("operator")
@@ -69,8 +73,3 @@ def make_recharge(request):
         user.wallet_balance = balance-price
         user.save()
         return Response({"message":"Transaction Succesful","Wallet_Balance" : f"Rs.{balance-price}" },status=status.HTTP_201_CREATED)
-        
-
-
-
-

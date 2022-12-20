@@ -1,7 +1,8 @@
 from .models import UserModel
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import check_password
@@ -30,7 +31,9 @@ def signup(request):
 
         user.is_superuser=False        
         user.save()
-        return Response({"message": "Account created successfully"}, status=status.HTTP_201_CREATED)
+        refresh = RefreshToken.for_user(user)
+
+        return Response({"message": "Account created successfully", "Token" : str(refresh.access_token) ,"Refresh_Token" : str(refresh)}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -47,8 +50,8 @@ def login(request):
                 refresh = RefreshToken.for_user(user)
                 return Response({
                     "message": "Login successfully",
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token)
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh)
                 })
             else:
                 return Response({"message":"Enter correct Password. Forgot?"})
@@ -57,24 +60,25 @@ def login(request):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def recharge_wallet(request):
     if request.method=='PUT':
-        username = request.data.get('username',None)
-        if username is not None:
-            user = UserModel.objects.get(username=username)
-            amount = request.data.get('amount',0)
-            if amount>0:
-                balance = user.wallet_balance + request.data['amount']
-            else:
-                return Response({"message" : "Enter valid amount details"}, status=status.HTTP_400_BAD_REQUEST)
-            user.wallet_balance = balance
-            user.save()
-            return Response({"message" : "Wallet Recharge Successful"}, status=status.HTTP_200_OK)
+        username = request.user
+        
+        user = UserModel.objects.get(username=username)
+        amount = request.data.get('amount',0)
+        if amount>0:
+            balance = user.wallet_balance + request.data['amount']
         else:
-            return Response({"message" : "username not found, Register First"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message" : "Enter valid amount details"}, status=status.HTTP_400_BAD_REQUEST)
+        user.wallet_balance = balance
+        user.save()
+        return Response({"message" : "Wallet Recharge Successful"}, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def current_balance(request):
-    username = request.data['username']
+    username = request.user
     user = UserModel.objects.get(username = username)
     return Response({"success":True, "Wallet_Balance":f"Rs.{user.wallet_balance}"})
