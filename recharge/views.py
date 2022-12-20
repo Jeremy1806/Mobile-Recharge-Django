@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from User.models import UserModel
-from .models import RechargePack
+from .models import RechargePack, MakeRecharge
 from recharge.serializer import PackCreateSerializer
 from django.core.serializers import serialize
 import json
@@ -24,7 +24,7 @@ def add_recharge_pack(request):
                 print(request.data)
                 try:
                     temp.save()
-                    return Response({"message":"Pack Added Successfully"},status=status.HTTP_200_OK)
+                    return Response({"message":"Pack Added Successfully"},status=status.HTTP_201_CREATED)
                 except:
                     return Response({"message" : "Server Error !! Try Again"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
@@ -45,6 +45,32 @@ def get_all_packs(request):
     for data in response:
         response1.append(data["fields"])
     return Response({"success":True , "data" : response1},  status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def make_recharge(request):
+    if request.method == 'POST':
+        username = request.data.get("username")
+        price = int(request.data.get("price"))
+        number = request.data.get("phone_number")
+        operator = request.data.get("operator")
+
+        user = UserModel.objects.get(username = username)
+        balance = user.wallet_balance
+        try:
+            recharge_pack = RechargePack.objects.filter(pack_price=price,pack_operator = operator).first()
+        except:
+            return Response({"message":"Pack Not Found !! Enter valid details"})
+        if balance<price:
+            return Response({"message":"Insufficient Balance in Wallet. Try Another payment method or recharge wallet"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        rechargeIns = MakeRecharge.objects.create(user = user, recharge_pack = recharge_pack,phone_number = number,operator=operator,price=price,status = 'Completed')
+        rechargeIns.save()
+        user.wallet_balance = balance-price
+        user.save()
+        return Response({"message":"Transaction Succesful","Wallet_Balance" : f"Rs.{balance-price}" },status=status.HTTP_201_CREATED)
+        
+
 
 
 

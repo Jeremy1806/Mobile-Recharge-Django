@@ -47,8 +47,8 @@ def login(request):
                 refresh = RefreshToken.for_user(user)
                 return Response({
                     "message": "Login successfully",
-                    "refresh": refresh,
-                    "access": refresh.access_token
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token)
                 })
             else:
                 return Response({"message":"Enter correct Password. Forgot?"})
@@ -72,3 +72,9 @@ def recharge_wallet(request):
             return Response({"message" : "Wallet Recharge Successful"}, status=status.HTTP_200_OK)
         else:
             return Response({"message" : "username not found, Register First"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def current_balance(request):
+    username = request.data['username']
+    user = UserModel.objects.get(username = username)
+    return Response({"success":True, "Wallet_Balance":f"Rs.{user.wallet_balance}"})
