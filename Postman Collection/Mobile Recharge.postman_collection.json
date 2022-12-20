@@ -1,0 +1,250 @@
+{
+	"info": {
+		"_postman_id": "6c42cb9a-93cf-45dd-b0a2-7f2779ed8bc1",
+		"name": "Mobile Recharge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21234694"
+	},
+	"item": [
+		{
+			"name": "Recharge",
+			"item": [
+				{
+					"name": "Add Recharge Pack",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"priyanshu@staff.com\",\n    \"pack_price\":\"101\",\n    \"pack_validity\":\"28\",\n    \"pack_description\":\"Get unlimited calling, 50 SMS and 2GB data for 28 days\",\n    \"pack_operator\":\"airtel\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/recharge/add",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"recharge",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All available packs",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcxNTczNTQ2LCJpYXQiOjE2NzE1Njk5NDYsImp0aSI6IjQ5ZDQ3ZmEyNTQyYjQzNDRhODg1Y2IwOWYyZGEzZTUwIiwidXNlcl9pZCI6M30.0svziD5cOBhAH3Nse2EqwYjLKe2OXJYa9TZxQ4zejV0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcxNTczNTQ2LCJpYXQiOjE2NzE1Njk5NDYsImp0aSI6IjQ5ZDQ3ZmEyNTQyYjQzNDRhODg1Y2IwOWYyZGEzZTUwIiwidXNlcl9pZCI6M30.0svziD5cOBhAH3Nse2EqwYjLKe2OXJYa9TZxQ4zejV0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"operator\" : \"airtel\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/recharge/packs",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"recharge",
+								"packs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Make Recharge",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"priyanshu@staff.com\",\n    \"price\":\"135\",\n    \"phone_number\":\"9988776655\",\n    \"operator\":\"bsnl\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/recharge/recharge",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"recharge",
+								"recharge"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"priyanshu@staff.com\",\n    \"password\": \"12345678\",\n    \"is_staff\":\"Yes\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/user/signup",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"priyanshu@singh.com\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/user/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wallet Recharge",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\":200\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/user/wallet",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/user/balance",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
