@@ -45,3 +45,6 @@ def get_all_packs(request):
     for data in response:
         response1.append(data["fields"])
     return Response({"success":True , "data" : response1},  status=status.HTTP_200_OK)
+
+
+
