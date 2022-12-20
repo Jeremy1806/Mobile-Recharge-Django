@@ -19,4 +19,4 @@ venv.bak/
 *.json
 node_modules/
 db.sqlite3
-migrations
+**/migrations/*
