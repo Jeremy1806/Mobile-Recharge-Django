@@ -11,6 +11,18 @@ from rest_framework.permissions import IsAuthenticated
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_recharge_pack(request):
+    ''' 
+        NOTE : You need to be staff user to use this Endpoint, create from optional field
+        DESC : This method is used to add recharge Packs
+        Request Body : 
+        {
+            "pack_price":"",
+            "pack_validity":"",
+            "pack_description":"",
+            "pack_operator":""
+        }
+        Returns : Succesful message or Error message
+    '''
     if request.method == 'POST':
         username = request.user
         price = int(request.data.get('pack_price'))
@@ -23,7 +35,6 @@ def add_recharge_pack(request):
             if user.is_staff:                
                 temp = PackCreateSerializer(data=request.data)
                 temp.is_valid(raise_exception=True)
-                print(request.data)
                 try:
                     temp.save()
                     return Response({"message":"Pack Added Successfully"},status=status.HTTP_201_CREATED)
@@ -39,7 +50,12 @@ def add_recharge_pack(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_packs(request):
-    operator = request.data.get('pack_operator')
+    ''' 
+        DESC : This method is used to get all Recharge Packs respective to mobile operator (Eg. "airtel" , "vi")
+        Request Body : {"operator" : ""}
+        Returns : List of all available mobile packs from the operator
+    '''       
+    operator = str(request.data.get('operator')).lower()
     query_set = RechargePack.objects.all()
     query_set = query_set.filter(pack_operator = operator)
     ser_data = serialize("json" , queryset=query_set)
@@ -53,11 +69,21 @@ def get_all_packs(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def make_recharge(request):
+    ''' 
+        DESC : This method is used to make the transactions, it will check the balance in User wallet and accordingly proceeds
+        Request Body : 
+        {
+            "price":"",
+            "phone_number":"",
+            "operator":""
+        }       
+        Returns : Successful message with remaining wallet balance
+    '''  
     if request.method == 'POST':
         username = request.user
         price = int(request.data.get("price"))
         number = request.data.get("phone_number")
-        operator = request.data.get("operator")
+        operator = str(request.data.get("operator")).lower()
 
         user = UserModel.objects.get(username = username)
         balance = user.wallet_balance
