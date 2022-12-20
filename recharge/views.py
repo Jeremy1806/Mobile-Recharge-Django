@@ -4,14 +4,15 @@ from rest_framework import status
 from User.models import UserModel
 from .models import RechargePack
 from recharge.serializer import PackCreateSerializer
+from django.core.serializers import serialize
+import json
 
 @api_view(['POST'])
 def add_recharge_pack(request):
     if request.method == 'POST':
-        print(request.data)
         username = request.data.get('username',None)
         price = int(request.data.get('pack_price'))
-        if username is not None :
+        if username is not None and not RechargePack.objects.filter(pack_price = price).exists():
             try:
                 user = UserModel.objects.get(username=username)
             except:
@@ -31,3 +32,16 @@ def add_recharge_pack(request):
 
         else:
             return {"message" : "Invalid Request!! Check username or price"}
+
+
+@api_view(['GET'])
+def get_all_packs(request):
+    operator = request.data.get('pack_operator')
+    query_set = RechargePack.objects.all()
+    query_set = query_set.filter(pack_operator = operator)
+    ser_data = serialize("json" , queryset=query_set)
+    response = json.loads(ser_data)
+    response1 = []
+    for data in response:
+        response1.append(data["fields"])
+    return Response({"success":True , "data" : response1},  status=status.HTTP_200_OK)
